@@ -18,8 +18,7 @@ do
  fi
     echo "$instance: $IP"
 
-aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE
- --change-batch '
+aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE --change-batch '
   {
     "Comment": "creating record"
     ,"Changes": [{
