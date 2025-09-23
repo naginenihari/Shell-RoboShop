@@ -4,7 +4,7 @@ AMI_ID="ami-09c813fb71547fc4f"
 SG_ID="sg-011e888af9e03fb6e"
 SUBNET_ID="subnet-0f6a0c42281790747"
 HOSTED_ZONE="Z05202297D7QR4S9L2JB"
-$DOMAIN_NAME="naginenihariaws.store"
+DOMAIN_NAME="naginenihariaws.store"
 
 for instance in $@
 do
