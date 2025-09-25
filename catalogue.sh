@@ -38,7 +38,7 @@ VALIDATE $? "Enabling NodeJS 20"
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Installed NodeJS"
 
-id roboshop
+id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
  useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
  VALIDATE $? "Creating system user"
@@ -49,7 +49,7 @@ mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "Creating app directory"
 
 rm -rf /app/*
-VALIDATE $? "Delete old sourcecode"
+VALIDATE $? "Removing old source code"
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
 VALIDATE $? "Downloading catalogue application source code"
 
