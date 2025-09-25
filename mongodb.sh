@@ -6,7 +6,7 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[37m"
 
-LOGS_FOLDER="/var/log/shell-scripting-roboshop"
+LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$(echo $0 |cut -d '.' -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 
@@ -20,18 +20,18 @@ fi
 
 VALIDATE() {
 if [ $1 -ne 0 ]; then
-    echo -e "installation of $2 is $R FAILURE $N" |tee -a $LOG_FILE
+    echo -e " $2 is $R FAILURE $N" |tee -a $LOG_FILE
     exit 1
 else 
-    echo -e "installation of $2 is $G SUCCESS $N" |tee -a $LOG_FILE
+    echo -e " $2 is $G SUCCESS $N" |tee -a $LOG_FILE
 fi
 }
 
 cp mongo.repo  /etc/yum.repos.d/
-VALIDATE $? "mongo repo is created"
+VALIDATE $? "Adding Mongo repo"
 
 dnf install mongodb-org -y 
-VALIDATE $? "mongo db is installing"
+VALIDATE $? "mongo db server is installing"
 
 systemctl enable mongod 
 VALIDATE $? "mongo db server services are enabled"
