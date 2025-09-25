@@ -27,14 +27,14 @@ else
 fi
 }
 
-cp mongo.repo  /etc/yum.repos.d/
+cp mongo.repo  /etc/yum.repos.d/ &>>$LOG_FILE
 VALIDATE $? "Adding Mongo repo"
 
-dnf install mongodb-org -y 
-VALIDATE $? "mongo db server is installing"
+dnf install mongodb-org -y &>>$LOG_FILE
+VALIDATE $? "Installing MongoDB"
 
-systemctl enable mongod 
-VALIDATE $? "mongo db server services are enabled"
+systemctl enable mongod &>>$LOG_FILE
+VALIDATE $? "Enabled MondoDB"
 
-systemctl start mongod 
-VALIDATE $? "mongo db server services are started"
+systemctl start mongod &>>$LOG_FILE
+VALIDATE $? "Started MongoDB"
