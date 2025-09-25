@@ -21,15 +21,19 @@ if [ $USERID -ne 0 ]; then
     echo "ERROR:: please run the script with root privelege" |tee -a $LOG_FILE
     exit 1  #failure mean other then Zero
 fi
+
+##### NodeJS ####
 dnf module disable nodejs -y &>>$LOG_FILE
 dnf module enable nodejs:20 -y &>>$LOG_FILE
 dnf install nodejs -y &>>$LOG_FILE
 id roboshop &>>$LOG_FILE
+
 if [ $? -ne 0 ]; then
  useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
 else
  echo -e "User is Already exist ..$Y SKIPPING $N"
 fi
+
 mkdir -p /app &>>$LOG_FILE
 rm -rf /app/*
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
