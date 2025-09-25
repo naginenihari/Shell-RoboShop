@@ -48,7 +48,8 @@ fi
 mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "Creating app directory"
 
-
+rm -rf /app/*
+VALIDATE $? "Delete old sourcecode"
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
 VALIDATE $? "Downloading catalogue application source code"
 
