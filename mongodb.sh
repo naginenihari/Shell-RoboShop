@@ -8,6 +8,7 @@ N="\e[37m"
 
 LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$(echo $0 |cut -d '.' -f1)
+SCRIPT_DIR=$PWD
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 
 mkdir -p $LOGS_FOLDER
@@ -27,7 +28,7 @@ else
 fi
 }
 
-cp mongo.repo  /etc/yum.repos.d/ &>>$LOG_FILE
+cp $SCRIPT_DIR/mongo.repo  /etc/yum.repos.d/ &>>$LOG_FILE
 VALIDATE $? "Adding Mongo repo"
 
 dnf install mongodb-org -y &>>$LOG_FILE
@@ -38,3 +39,9 @@ VALIDATE $? "Enabled MondoDB"
 
 systemctl start mongod &>>$LOG_FILE
 VALIDATE $? "Started MongoDB"
+
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
+VALIDATE $? "Allowing remote connections to mongodb"
+
+systemctl restart mongod
+VALIDATE $? "Restarted mongoDB"
