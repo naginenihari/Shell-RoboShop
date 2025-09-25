@@ -20,7 +20,7 @@ do
 
 aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE --change-batch '
   {
-    "Comment": "creating record"
+    "Comment": "updating the record with new privateip"
     ,"Changes": [{
       "Action"              : "UPSERT"
       ,"ResourceRecordSet"  : {
