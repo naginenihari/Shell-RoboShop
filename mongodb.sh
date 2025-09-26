@@ -10,6 +10,7 @@ LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$(echo $0 |cut -d '.' -f1)
 SCRIPT_DIR=$PWD
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+START_TIME=$(date +%s)
 
 mkdir -p $LOGS_FOLDER
 echo "Script started executed at:$(date)" |tee -a $LOG_FILE
@@ -28,7 +29,7 @@ else
 fi
 }
 
-cp $SCRIPT_DIR/mongo.repo  /etc/yum.repos.d/ &>>$LOG_FILE
+cp $SCRIPT_DIR/mongo.repo  /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
 VALIDATE $? "Adding Mongo repo"
 
 dnf install mongodb-org -y &>>$LOG_FILE
@@ -45,3 +46,7 @@ VALIDATE $? "Allowing remote connections to mongodb"
 
 systemctl restart mongod
 VALIDATE $? "Restarted mongoDB"
+
+END_TIME=$(date +%s)
+TOTAL_TIME=$(( $END_TIME - $START_TIME ))
+echo -e "Script executed in: $Y $TOTAL_TIME Seconds $N"
