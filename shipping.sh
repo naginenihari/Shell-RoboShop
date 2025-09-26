@@ -56,10 +56,10 @@ VALIDATE $? "Removing existing code"
 unzip /tmp/shipping.zip &>>$LOG_FILE
 VALIDATE $? "unzip the shipping code"
 
-mvn clean package 
+mvn clean package &>>$LOG_FILE
 VALIDATE $? "Dependences are downloading"
 
-mv target/shipping-1.0.jar shipping.jar 
+mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
 VALIDATE $? "Rename the application sourcefile"
 
 cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service &>>$LOG_FILE
