@@ -29,12 +29,14 @@ else
 fi
 }
 
+##MYSQL Installation##
 dnf install mysql-server -y  &>>$LOG_FILE
 VALIDATE $? "Installing Mysql"
 systemctl enable mysqld  &>>$LOG_FILE
 VALIDATE $? "Enabling Mysql"
 systemctl start mysqld  &>>$LOG_FILE
 VALIDATE $? "Started Mysql"
+
 mysql_secure_installation --set-root-pass RoboShop@1 &>>$LOG_FILE
 VALIDATE $? "Setting up Root password"
 
