@@ -31,7 +31,7 @@ fi
 }
 ##Python Installation ##
 dnf install python3 gcc python3-devel -y &>>$LOG_FILE
-VALIDATE $? "Installed NodeJS"
+VALIDATE $? "Installing  python3"
 
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
