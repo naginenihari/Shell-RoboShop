@@ -11,6 +11,7 @@ SCRIPT_NAME=$(echo $0 |cut -d '.' -f1)
 MONGODB_HOST=mongodb.naginenihariaws.store
 SCRIPT_DIR=$PWD
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+START_TIME=$(date +%s)
 
 mkdir -p $LOGS_FOLDER
 echo "Script started executed at:$(date)" |tee -a $LOG_FILE
@@ -28,6 +29,7 @@ else
     echo -e " $2 is $G SUCCESS $N" |tee -a $LOG_FILE
 fi
 }
+##### NodeJS ####
 
 dnf module disable nodejs -y &>>$LOG_FILE
 VALIDATE $? "Disabling NodeJS"
@@ -47,16 +49,18 @@ else
 fi
 mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "Creating app directory"
-
-rm -rf /app/*
-VALIDATE $? "Removing old source code"
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
 VALIDATE $? "Downloading catalogue application source code"
 
 cd /app 
 VALIDATE $? "Changing to app directory"
+
+rm -rf /app/*
+VALIDATE $? "Removing existing code"
+
 unzip /tmp/catalogue.zip &>>$LOG_FILE
 VALIDATE $? "unzip the catalogue code"
+
 npm install &>>$LOG_FILE
 VALIDATE $? "Install Dependencies"
 
@@ -67,7 +71,7 @@ systemctl enable catalogue &>>$LOG_FILE
 VALIDATE $? "Enable catalogue Service"
 
 cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
-VALIDATE $? "Copy mongorepo"
+VALIDATE $? "Copy MongoDB repo"
 
 dnf install mongodb-mongosh -y &>>$LOG_FILE
 VALIDATE $? "Install mongoDB Client"
@@ -80,7 +84,9 @@ else
     echo -e "Catalogue products already loaded ... $Y SKIPPING $N"
 fi  
 
-mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOG_FILE
-VALIDATE $? "Load catalogue products"
 systemctl restart catalogue &>>$LOG_FILE
 VALIDATE $? "Restarted catalogue Service"
+
+END_TIME=$(date +%s)
+TOTAL_TIME=$(( $END_TIME - $START_TIME ))
+echo -e "Script executed in: $Y $TOTAL_TIME Seconds $N"
