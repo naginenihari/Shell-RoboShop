@@ -29,7 +29,7 @@ else
     echo -e " $2 is $G SUCCESS $N" |tee -a $LOG_FILE
 fi
 }
-##Python Installation
+##Python Installation ##
 dnf install python3 gcc python3-devel -y &>>$LOG_FILE
 VALIDATE $? "Installed NodeJS"
 
@@ -49,8 +49,10 @@ VALIDATE $? "Downloading payment application source code"
 
 cd /app 
 VALIDATE $? "Changing to app directory"
+
 unzip /tmp/payment.zip &>>$LOG_FILE
 VALIDATE $? "unzip the payment code"
+
 pip3 install -r requirements.txt
 VALIDATE $? "Downloading Dependences"
 
