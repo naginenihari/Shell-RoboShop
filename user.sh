@@ -29,7 +29,7 @@ else
     echo -e " $2 is $G SUCCESS $N" |tee -a $LOG_FILE
 fi
 }
-
+##### NodeJS ####
 dnf module disable nodejs -y &>>$LOG_FILE
 VALIDATE $? "Disabling NodeJS"
 
@@ -39,28 +39,37 @@ VALIDATE $? "Enabling NodeJS 20"
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Installed NodeJS"
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-VALIDATE $? "Creating system user"
+id roboshop &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+    VALIDATE $? "Creating system user"
+else
+    echo -e "User already exist ... $Y SKIPPING $N"
+fi
 
 mkdir /app &>>$LOG_FILE
 VALIDATE $? "Creating app directory"
 
 
 curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
-VALIDATE $? "Downloading user application source code"
+VALIDATE $? "Downloading user application sourcecode"
 
 cd /app 
 VALIDATE $? "Changing to app directory"
+
 unzip /tmp/user.zip &>>$LOG_FILE
 VALIDATE $? "unzip the user code"
+
 npm install &>>$LOG_FILE
 VALIDATE $? "Install Dependencies"
 
 cp $SCRIPT_DIR/user.service /etc/systemd/system/user.service &>>$LOG_FILE
 VALIDATE $? "copy systemctl service"
+
 systemctl daemon-reload
 systemctl enable user &>>$LOG_FILE
 VALIDATE $? "Enable user Service"
+
 systemctl restart user &>>$LOG_FILE
 VALIDATE $? "Restarted user Service"
 
