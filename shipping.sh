@@ -33,30 +33,42 @@ fi
 dnf install maven -y &>>$LOG_FILE
 VALIDATE $? "Installed Maven"
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-VALIDATE $? "Creating system user"
+id roboshop &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+    VALIDATE $? "Creating system user"
+else
+    echo -e "User already exist ... $Y SKIPPING $N"
+fi
 
 mkdir /app &>>$LOG_FILE
 VALIDATE $? "Creating app directory"
 
 
 curl -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip &>>$LOG_FILE
-VALIDATE $? "Downloading shipping application source code"
+VALIDATE $? "Downloading shipping application sourcecode"
 
 cd /app 
 VALIDATE $? "Changing to app directory"
+rm -rf /app/*
+VALIDATE $? "Removing existing code"
+
 unzip /tmp/shipping.zip &>>$LOG_FILE
 VALIDATE $? "unzip the shipping code"
+
 mvn clean package 
 VALIDATE $? "Dependences are downloading"
-mv target/shipping-1.0.jar shipping.jar 
 
+mv target/shipping-1.0.jar shipping.jar 
+VALIDATE $? "Rename the application sourcefile"
 
 cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service &>>$LOG_FILE
 VALIDATE $? "copy systemctl service"
+
 systemctl daemon-reload
 systemctl enable shipping &>>$LOG_FILE
 VALIDATE $? "Enable shipping Service"
+
 dnf install mysql -y &>>$LOG_FILE
 VALIDATE $? "Mysql client "
 
