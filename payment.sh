@@ -29,16 +29,20 @@ else
     echo -e " $2 is $G SUCCESS $N" |tee -a $LOG_FILE
 fi
 }
-
+##Python Installation
 dnf install python3 gcc python3-devel -y &>>$LOG_FILE
 VALIDATE $? "Installed NodeJS"
 
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
-VALIDATE $? "Creating system user"
+id roboshop &>>$LOG_FILE
+if [ $? -ne 0 ]; then
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
+    VALIDATE $? "Creating system user"
+else
+    echo -e "User already exist ... $Y SKIPPING $N"
+fi
 
 mkdir /app &>>$LOG_FILE
 VALIDATE $? "Creating app directory"
-
 
 curl -o /tmp/payment.zip https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip &>>$LOG_FILE
 VALIDATE $? "Downloading payment application source code"
@@ -48,6 +52,7 @@ VALIDATE $? "Changing to app directory"
 unzip /tmp/payment.zip &>>$LOG_FILE
 VALIDATE $? "unzip the payment code"
 pip3 install -r requirements.txt
+VALIDATE $? "Downloading Dependences"
 
 cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service &>>$LOG_FILE
 VALIDATE $? "copy systemctl service"
